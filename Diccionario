@@ -1,0 +1,59 @@
+########################################################################################################################
+
+                                            #EJERCICIO PRÁCTICO#
+                                                #Traductor#
+
+'''Escribe un traductor de inglés a español y español a inglés con un menú para el usuario'''
+
+#Fracisco Ariel Arenas Enciso
+#Traductor
+
+#Se crea un diccionario global para ahorrar memoria
+diccionario = { "Hello":"Hola", "World":"Mundo", "Dog":"Perro", "Drums":"Bateria", "Bass":"Bajo" }
+
+
+def leerOpcion():
+    print('''
+    1. Traducir de inglés a español
+    2. Traducir de español a inglés
+    0. Salir
+    ''')
+    opcion = int(input("¿Qué es lo que quieres hacer? "))
+    return opcion       #Regresa lo que haya tecleado el usuario
+
+
+#Recibe palbra en inglés y la regresa en español
+def traducirIE(palabra):
+    if palabra in diccionario:
+        return diccionario[palabra]
+    return "La palabra no se encuentra en el diccionario"
+
+
+#Recibe palabra en español y la regresa en inglés
+def traducirEI(palabra):
+    for llave, valor in diccionario.items():
+        if valor == palabra:
+            return llave
+    return "La palabra no está en el diccionario"
+
+
+def main():
+    opcion = leerOpcion()   #LeerOpcion() leera que quiere hacer el usuario
+    while opcion != 0:
+        if opcion == 1:     #Traduce de inglés a español
+            palabra = input("Escribe la palabra en inglés: ")  #No se convierte a entero porque no se usará
+            traduccion = traducirIE(palabra)
+            print("En español es: ", traduccion)
+
+        elif opcion == 2:        #Traduce de español a inglés
+            palabra = input("Escribe la palabra en español: ")
+            traduccion = traducirEI(palabra)
+            print("En inglés es: ", traduccion)
+        else:
+            print("Opción inválida")
+
+        opcion = leerOpcion()          #Siempre, al final de un ciclo, se vuelve a leer la variabl inicial.
+                                        #Porque se podría convertir en un ciclo infinito
+
+
+main()
