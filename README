@@ -1,0 +1,6 @@
+echo "# Tercer-registro" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/FA0AE/Tercer-registro.git
+git push -u origin master
