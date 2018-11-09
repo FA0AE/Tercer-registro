@@ -1,0 +1,85 @@
+'''
+
+Dos tipos de archivos:
+    Texto = Información traducida para que sea entendible por las personas
+        EJ. 'Hola
+                Soy un archivo de
+                                Texto'
+
+    Binario = Información se almacena como eso, como información, tal y como se alamcena en la memoria
+        EI. '01001101
+                    0010101'
+
+Para enlazar una variable con un archivo se usa la FUNCIÓN 'OPEN'
+
+    EJ. archivo = open('nombre.extenseión', 'modo', encoding='UTF-8')
+
+Cuando hay un archivo directamente en 'for' no se pone modo ya que siempre está en modo lectura'
+
+'''
+
+#######################################################################################################################
+                                        #Abrir Archivo#
+
+'Práctica para abrir un archivo'
+
+# Autor: Francisco Ariel Arenas Enciso
+# Práctica: Abrir archivos en python
+
+'''
+def main():
+    archivo = open("datos.txt", "r", encoding="UTF-8")             #"Open" es una operador que permite abrir un archivo
+    texto = archivo.read()
+    print(texto)
+
+main()
+'''
+
+########################################################################################################################
+                                        #Gráficar frecuencia#
+'''
+
+'Práctica con el Quijote'
+
+# Autor: Francisco Ariel Arenas Enciso
+# Práctica: Gráficar la frecuencia con que aparecen letras
+
+import matplotlib.pyplot as plot      #Importa la librería que hace gráficas mediante la sublibrería 'pyplot'
+
+def graficar(contadores):
+    datosX = contadores.keys()          #Quiero gráficar todas las llaves del diccionario
+    datosY = contadores.values()        #Permite que los datos estén ordenados
+
+    plot.plot(datosX, datosY)           #Pedirle a plot que gráfique
+    plot.title('Letras en el libro: El Quijote de la Mancha')   #Nombre del gráfico
+    plot.xlabel('Letras')                                       #Nombre de etiqueta en X
+    plot.ylabel('Veces que se repite')                          #Nombre de etiqueta en Y
+
+
+    plot.show()                         #Muestra la gráfica
+
+def procesarArchivo(abrirArchivo):
+
+    contadores = {}   #Diccionario de contadores (llave:valor) --> ( 'e':231 )
+    contadorDeLineas = 0
+    for linea in abrirArchivo:              #Visita linea por linea
+        contadorDeLineas += 1
+        for letra in linea.upper():             #Visita cada letra de la cadena
+            if letra.isalpha():
+                if letra in contadores:        #Se pregunta si la letra está dentro del diccionario
+                    contadores[letra] += 1      #Cuenta uno más
+                else:
+                    contadores[letra] = 1       #Solo se ejecuta la primera vez que encuentra una letra
+    print(contadores)                       #Se valida como resultpo el diccionario
+    print(contadorDeLineas)
+
+    graficar(contadores)                    #Pasar a una función llamada 'gráficar' los datos del diccionario
+
+
+def main():
+    abrirArchivo = open("quijote.txt", "r", encoding="UTF-8")        #Abro archivo
+    procesarArchivo(abrirArchivo)                                       #Se procesan datos
+    abrirArchivo.close()                                                #Se cierra archivo
+main()
+
+'''
