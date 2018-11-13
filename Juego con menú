@@ -1,0 +1,220 @@
+# encoding: UTF-8
+# Autor: Roberto Martínez Román
+# Muestra cómo utilizar pygame en programas que dibujan en la pantalla
+
+import pygame   # Librería de pygame
+from random import randint
+
+'Zona de declaración de constantes'
+# Dimensiones de la pantalla
+ANCHO = 800
+ALTO = 600
+# Colores
+BLANCO = (255, 255, 255)  # R,G,B en el rango [0,255], 0 ausencia de color, 255 toda la intensidad
+VERDE_BANDERA = (27, 94, 32)    # un poco de rojo, más de verde, un poco de azul
+ROJO = (255, 0, 0)      # solo rojo, nada de verde, nada de azul
+AZUL = (0, 0, 255)      # nada de rojo, ni verde, solo azul
+NEGRO = (0, 0, 0)
+
+
+#Estados
+MENU = 1
+JUGANDO = 2
+#GANÓ
+#PERDIÓ
+#PAUSA
+#MARCADORES
+
+#Estados de movimiento
+QUIETO = 1
+ARRIBA = 2
+ABAJO = 3
+DERECHA = 4
+IZQUIERDA = 5
+
+#Función que dibuja el personaje
+def dibujarPersonaje(ventana, spritePlanta):
+    ventana.blit(spritePlanta.image, spritePlanta.rect)    #blit es para asignar una imagen. Pide una imagen y el lugar
+
+
+#Función para dibujar todos los enemigos
+def dibujarEnemigo(ventana, listaEnemigos):
+    for enemigo in listaEnemigos:     #Este elemento 'enemigo' for visita a cada enemigo que esta dentro de la lista
+        ventana.blit(enemigo.image, enemigo.rect)
+
+#Función que actualiza a los enemigos
+def actualizarEnemigos(listaEnemigos):
+    for enemigo in listaEnemigos:   #Se visita cada enemigo   'for variable in lista'
+        enemigo.rect.left -= 1                     #Dentro del for, se visita o se pide lo que quieres hacer
+                                                   #En este caso se mueva el zombie hacia la izquierda.
+
+#Función para dibujar la venana
+def dibujarBala(ventana, listaBalas):
+    for bala in listaBalas:
+        ventana.blit(bala.image, bala.rect)
+
+
+#Función para dibujar actualizar las balas
+def actualizarBalas(listaBalas):
+    for bala in listaBalas:
+        bala.rect.right += 5
+
+
+#Función para verificar las colisiones (golpes)
+def verificarColisiones(listaBalas, listaEnemigos):
+    #recorrer las listas al revés
+    for k in range(len(listaBalas)-1, -1, -1):   #Recorrer lista de balas del último al primero
+        bala = listaBalas[k]
+        borrarBala = False          #Ciclo for para las balas
+        for enemigos in range(len(listaEnemigos)-1, -1, -1):    #Ciclo for que visita a todos los enemigos
+            enemigo = listaEnemigos[enemigos]
+            #bala vs enemigo
+            xbala = bala.rect.left              #Aquí no se usan duplas porque no se usarán ancho y alto
+            ybala = bala.rect.bottom
+            xenemigo, yenemigo, anchoEnemigo, altoEnemigo = enemigo.rect #Se obtiene de toda la dupla, se toma cada uno de los valores
+            if xbala >= xenemigo and xbala <= xenemigo + anchoEnemigo and ybala >= yenemigo and ybala >= yenemigo + altoEnemigo:
+                listaEnemigos.remove(enemigo)  #Se borra de la lista el enemigo. No lo borra de la pantalla luego, luego
+                borrarBala = True #condición para eliminar la bala
+                break
+        if borrarBala:
+            listaBalas.remove(bala)
+
+    #Se modificó el orden de los poperadores relacionales debido a que la imagen estaba siendo dibujada arriba.
+    #Se tiene que modificar (x, y) de la imagen orignial pues esta siendo dibujada desde arriba y no desde abajo.
+
+#Estructura básica de un programa que usa pygame para dibujar
+def dibujar():
+    # Inicializa el motor de pygame
+    pygame.init()
+    # Crea una ventana de ANCHO x ALTO
+    ventana = pygame.display.set_mode((ANCHO, ALTO))  # Crea la ventana donde dibujará
+    reloj = pygame.time.Clock()  # Para limitar los fps
+    termina = False  # Bandera para saber si termina la ejecución, iniciamos suponiendo que no
+
+
+    #Personaje principal
+    imgPlanta = pygame.image.load("Planta.png")  #Se carga la imagen
+    spritePlanta = pygame.sprite.Sprite()  #Se crea un sprite vació (Un sprite que no tiene imagen ni posición)
+    spritePlanta.image = imgPlanta    #Se asigna la imagen al sprite
+    spritePlanta.rect = imgPlanta.get_rect()  #"get_rect()" regresa las dimensiones (x (left), y (bottom), ancho y alto)
+    spritePlanta.rect.left = 0
+    spritePlanta.rect.bottom = ALTO//2 + spritePlanta.rect.height//2 #Sprite.planta conoce la altura de la imagen y se
+                                                                        # colocará en el dentro de la izquierda
+    movimiento = QUIETO
+
+
+    #Enemigos
+    listaEnemigos = []   #Lista vacia de enemigos
+    imgZombie = pygame.image.load("Zombie.jpg")
+    for  k in range(20):     #Cuantos enemigos quiero (20)
+        spriteEnemigo = pygame.sprite.Sprite()
+        spriteEnemigo.image = imgZombie   #Se le asigna imagen al sprtie
+        spriteEnemigo.rect = imgZombie.get_rect()
+        spriteEnemigo.rect.left = randint(ANCHO//2, ANCHO)  #Valor aleatorio de la posición
+        spriteEnemigo.rect.bottom = randint(0, ALTO)  #Se extiende por toda la pantalla
+        listaEnemigos.append(spriteEnemigo)   #Se llena la lista con los sprites del enemigo
+
+    #Balas
+    imgBala = pygame.image.load("Bala.jpg")
+    listaBalas = []         #Se crea la lista porque el usuario determina cuando se usan
+
+    #Definir el estado de juego
+    estado = MENU   #Estado inicial
+
+    #Imágenes para el menú
+    imgBtnJugar = pygame.image.load("button_jugar.png")
+
+    #Imágen de fondo para el juego
+    imgFondo = pygame.image.load("Fondo juego.jpg")
+    xFondo = 0  #donde se imprimirá el fondo
+
+
+
+
+    while not termina:  # Ciclo principal, MIENTRAS la variable termina sea False, el ciclo se repite automáticamente
+        # Procesa los eventos que recibe
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:  # El usuario hizo click en el botón de salir
+                termina = True      # Queremos terminar el ciclo
+            elif evento.type == pygame. KEYDOWN:    #Cuando el usuario presiona cualquier tecla
+                if evento.key == pygame.K_UP:    #Prueba que teclas se apreto
+                    #spritePlanta.rect.bottom -= 10   #SpritePlanta es el valor de y
+                    movimiento = ARRIBA
+                elif evento.key == pygame.K_DOWN:
+                    #spritePlanta.rect.bottom += 10
+                    movimiento = ABAJO
+                elif evento.key == pygame.K_LEFT:           #Son las teclas para mover al personaje. Se llama al sprite
+                    #spritePlanta.rect.left -= 10              #y dependiendo si queremos mover y usamos a bottom
+                    movimiento = IZQUIERDA
+                elif evento.key == pygame.K_RIGHT:            #
+                    #spritePlanta.rect.left += 10
+                    movimiento = DERECHA
+                elif evento.key == pygame.K_z:    #Disparo
+                    spriteBala = pygame.sprite.Sprite()
+                    spriteBala.image = imgBala     #La imagen se crea afuera para que no se cargue
+                    spriteBala.rect = imgBala.get_rect()
+                    spriteBala.rect.left = spritePlanta.rect.left + spritePlanta.rect.width   #'x' es el ancho del
+                    spriteBala.rect.bottom = spritePlanta.rect.bottom - spritePlanta.rect.height//2     #personaje
+                    listaBalas.append(spriteBala)
+            elif evento.type == pygame.MOUSEBUTTONDOWN:    #Evento significa que el usuario apretó un botón
+                xm, ym = pygame.mouse.get_pos()   #Forma de leer la posición del click 'xm = x del mouse'
+                xb = ANCHO//2 - 128    #'xb = x del boton'
+                yb = ALTO//2 - 50
+                anchoBoton = 256   #Unidades definidas por la página
+                altoBoton = 100    #img.get.rect(width)
+                if xm >= xb and xm <= xb + anchoBoton and ym >= yb and ym <= yb + altoBoton:
+                    estado = JUGANDO  #El estado del juego cambia a jugar
+
+        # Pregunta en que estado se encuentra el juego
+        if estado == MENU:       #Instrucción dentro de while
+            # Color de la pantalla / Borrar pantalla
+            ventana.fill(ROJO)
+            ventana.blit(imgBtnJugar, (ANCHO//2 - 128, ALTO//2 - 50))  #Se dibuja el botón #Para centralo le resto la mitad del ancho y altura del botón
+
+
+        elif estado == JUGANDO:     #Este elif condiciona las actualizaciones
+
+            #Actualizar objetos (enemigos, items, personaje)
+            actualizarEnemigos(listaEnemigos)    #Se cambia la 'x' de cada enemigo. No los dibuja, solamente necesita la lista
+            actualizarBalas(listaBalas)
+            verificarColisiones(listaBalas, listaEnemigos)
+            #Mover al personaje
+            if movimiento == ARRIBA:
+                spritePlanta.rect.bottom -= 5
+            elif movimiento == ABAJO:
+                spritePlanta.rect.bottom += 5
+            elif movimiento == DERECHA:
+                spritePlanta.rect.left += 5
+            elif movimiento == IZQUIERDA:
+                spritePlanta.rect.left -= 5
+
+            # Color de la pantalla / Borrar pantalla
+            ventana.fill(NEGRO)
+            ventana.blit(imgFondo,(xFondo, 0))  #y no se mueve porque es un juego horizontal
+            ventana.blit(imgFondo, (xFondo + 1024,0))   #Para que sea infinito el fondo se dibuja otra imagen en las coordenadas del fondo + eñl ancho de la imagen
+            xFondo -= 50  #Esto hace que el fondo se mueva cada vez que nostros pasamos por el punto dado. Qué tan rápido se mueve el fondo
+            if xFondo <= -1024:     #La imagen esta fuera
+                xFondo = 0       #La imagen se vuelve a repetir
+
+            dibujarPersonaje(ventana, spritePlanta)   #Siempre que se quiere dibujar, se debe de mandar la ventana
+            dibujarEnemigo(ventana, listaEnemigos)   #Se envía la ventana y la lista de enemigos
+            dibujarBala(ventana, listaBalas)      #Se envía la ventana y la lista de balas
+
+
+        pygame.display.flip()  # Actualiza trazos (Si no llamas a esta función, no se dibuja)
+        reloj.tick(40)  # 40 fps
+
+    # Después del ciclo principal
+    pygame.quit()  # termina pygame
+
+
+# Función principal, aquí resuelves el problema
+def main():
+    dibujar()   # Por ahora, solo dibuja
+
+
+# Llamas a la función principal
+main()
+
+'da button factory .com #pagina que permite crear botones'
+'https://textcraft.net/'
