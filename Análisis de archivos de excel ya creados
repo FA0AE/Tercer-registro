@@ -1,0 +1,45 @@
+## Antes de empezar a programar, debes de convertir cualquier archivo de excel a uno de texto csv separado con comas. 
+## Ese archivo (archivo.csv) será copiado a la carpeta del proyecto en pycharm.
+## Verficiar que líneas sirven y cuáles no 
+
+################################################# ANÁLISIS DE ARCHIVO ###############################################################
+
+#Francisco Ariel
+#Proceso de archivo
+
+def main():
+    entrada = open("Calificaciones.csv", "r")   #Creación del archivo de entrada (aquel que analizará la información)
+    salida = open("Promedios.txt", "w")         #Creación del archivo de salida
+
+    entrada.readline()                          #Lee una línea y la ignora
+    for linea in entrada:                       #Lee cada línea del archivo
+        datos = linea.split(",")                #Función que toma una cadena completa, la divide y la devuelve una lista
+                                                # ["pepito", "A01122332", "100", "85", "75"] -> Ejemplo
+        matricula= datos[1][2:]                 #Cadena con la matricula; Se extraen 'A0' con [2:]
+        registroUno = int(datos[2])             #La cadena de calficación se convierte en entero
+        registroDos = int(datos[3])             #La cadena de calficación se convierte en entero
+        registroTres = int(datos[4])            #La cadena de calficación se convierte en entero
+        promedio = ((registroUno + registroDos + registroTres) / 3)         #Se calcula el promedio utilizando variables
+
+        mensaje = 'Aprobado'                    #Se asume que sí aprobo
+        if promedio < 70:                       #Se pregunta que pasó
+            mensaje = 'Reprobo'                 #Se cambia el  mensaje
+
+      # print(matricula, "%.2f" % promedio, mensaje, sep="*")       #Sep= parametro que permite modificar los espacios
+
+        print("%s, %.2f, %s" % (matricula, promedio, mensaje))
+        salida.write("%s, %.2f, %s\n" % (matricula, promedio, mensaje))     #\n escribe con lineas indentadas (espacios)
+
+
+    entrada.close()                             #No se debe cerrar el archivo dentro del 'for'
+    salida.close()                              #Se cierra el archivo de salida después de leer
+
+
+main()
+
+################################################# ANÁLISIS DE ARCHIVO ###############################################################
+
+## Para exportar el archivo a Excel, debes de visualizar la extensión del proyecto (archivo.txt)
+## En el explorador de archivos (acceder dando click derecho en el nombre del archivo en python)
+## Cambiar la extensio '.txt' a '.csv'
+## O simplemente nombrar directo en python (línea 12) el archivo como '.csv'
