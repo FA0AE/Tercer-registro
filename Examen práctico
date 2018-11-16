@@ -1,0 +1,139 @@
+#Francisco Ariel Arenas Enciso
+#A01369122
+#Desarrollo dela cuarta evaluación
+
+'''
+Función que crea el diccionario mediante el uso de la función char
+'''
+def creacionDiccionario():
+    diccionario = {}                                            #Se crea un diccionario vacío
+    for letra in range(1, 27):                                  #Recorre una letra dentro del alfabeto
+        diccionario['{}'.format(chr(letra + 64))] = letra       #Con char se le da formato al diccionario
+    return(diccionario)                                         #Se regresa el diccionario creado
+
+'''
+Función que resuelve la primera parte del examen mediante el uso de diccionarios y de listas 
+Ésta recibe de main() el diccionario creado en su función correspondiente.
+'''
+def primeraParte(diccionario):
+
+
+
+'''
+Función que resuelve la segunda parte del examen mediante el uso funciones para cadenas (ord(), chr(), etc)
+así como de funciones para cadenas (upper(), lower(),etc).
+'''
+def segundaParte():
+    nombre = "Francisco Ariel Arenas Enciso"        #Se crea una variable que guarda la cadena de mi nombre
+    miNombre = nombre.upper()                       #Se convierte a mayúscula los caracteres del nombre original
+    miNombre = miNombre.replace(" ", "")            #Se eliminan los espacios del nombre
+    sumaCaracter = 0                                #Contador que permitira sumar los valores ASCII del nombre
+
+    for letra in miNombre:                          #Ciclo 'for' que recorre las letras del nombre
+        sumaCaracter += (ord(letra) - 64)
+                                                    #Se actualiza el contador con la suma de ord() que devuelve el...
+                                                    #...valor ASCII de la cadena y se le resta 64 ya que es el...
+                                                    #...valor ASCII de los signos de las letras (A,B,C....Z)
+
+    print('Mi nombre:', nombre,',','suma : ', sumaCaracter)  #Se imprime el resultado
+
+
+'''
+Función que resuelve la tercera parte del examen mediante el uso de diccionarios,
+listas y la metodología para abrir/crear archivos de texto.
+Así como las anteriores, recibe de main() el diccionario creado en su función correspondiente.
+'''
+def terceraParte(diccionario):
+
+
+
+'''
+Función que resuelve la tercera parte del examen mediante el uso de diccionarios,
+listas y la metodología para abrir archivos de texto.
+Así como las anteriores, recibe de main() el diccionario creado en su función correspondiente
+'''
+def cuartaParte(diccionario):
+
+
+
+'''
+Función main() Ésta es la encargada de llamar a cada una de las funciones anteriores.
+Resulve el problema y da a las demás funciones el diccionario necesario para su desarrollo.
+'''
+def main():
+    diccionarioGlobal = creacionDiccionario()  #Se establece una variable con el diccionario creado en su función
+    print('''                                  #Con el fin de que sea más ordenado, se colocan los datos
+    Práctica : Cuarta Evaluación 
+    Autor : Francisco Ariel Arenas Enciso
+    Matrícula : A01369122
+    --------------------------------------
+    ''')
+
+    print('''
+    Primer ejercicio: 
+    ''')
+    primeraParte(diccionarioGlobal)                     #Se llama a la primera función
+    print('''
+    ---------------------------------------
+    ''')
+
+    print('''
+    Segundo ejercicio: 
+    ''')
+    segundaParte()                     #Se llama a la segunda función
+    print('''
+    ---------------------------------------
+    ''')
+
+    print('''
+    Tercer ejercicio: 
+    ''')
+    terceraParte(diccionarioGlobal)                     #Se llama a la tercera función
+    print('''
+    ---------------------------------------
+    ''')
+
+    print('''
+    Cuarto ejercicio: 
+    ''')
+    cuartaParte(diccionarioGlobal)                     #Se llama a la cuarta función
+    print('''
+    ---------------------------------------
+    ''')
+
+
+main()                                                  #Se llama a main() para que resuelva el examen
+
+
+
+'''
+#Versión donde se crean las listas y se borran todos loselementos de la lista menos el primero
+def poema():
+    archivo = open("poema.txt", "r", encoding="UTF-8")
+    archivoAbierto = archivo.readlines()
+    for linea in archivoAbierto:
+        listaElementos = list(linea[0])
+        for letras in listaElementos:
+            nuevaLista = list(letras[0])
+            print(nuevaLista)
+
+poema()
+
+
+#Versión en donde se borran los espacios de la cadena 
+def poema():
+    archivo = open("poema.txt", "r", encoding="UTF-8")
+    archivoAbierto = archivo.read()
+    for linea in archivoAbierto:
+        for letra in linea:
+            if letra.isalpha() == True:
+                return(linea)
+            for linea in archivoAbierto:
+                lista = list(linea[0])
+                print(lista)
+                
+                
+                
+                
+                
+'''
