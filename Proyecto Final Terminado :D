@@ -1,0 +1,327 @@
+#Francisco Ariel Arenas Enciso
+#A01369122
+#Desarrollo de un videojuego mediante Pygame (Proyecto final)
+
+'Importación de librerías'
+import pygame
+import random
+import time
+
+'Declaración de variables globales'
+ANCHO = 800                                             #Ancho de la pantalla
+ALTO = 600                                              #Alto de la pantalla
+
+'Colores'
+#Color         #R       #G      #B
+Blanco =      (255,     255,    255)
+Negro =       (0,       0,      0)
+Rojo =        (255,     0,      0)
+Azul =        (0,       0,      255)
+
+'Estados'
+MENU = 1
+JUGANDO = 2
+'Función para dibujar al personaje'
+def dibujarPersonaje(ventana, imagen, x, y):
+    ventanaDeJuego = ventana                    #Se define la pantalla de juego
+    imagenMario = imagen                        #Se define la imagen del personaje
+    x = x                                       #Posición en 'x' de la imagen del personaje
+    y = y                                       #Posición en 'y' de la imagen del personaje
+    ventanaDeJuego.blit(imagenMario, (x, y))    #Se dibuja al personaje en la ventana
+
+
+'Función que dibuja al primer obstáculo'
+def dibujarObstaculoUno(ventana, imagen, xObstaculo, yObstaculo):
+    ventanaDeJuego = ventana                    #Se define la pantalla de juego
+    imagenObstaculo = imagen                    #Se define la imagen del obstáculo
+    x = xObstaculo                              #Posición en 'x' de la imagen
+    y = yObstaculo                              #Posición en 'y' de la imagen
+    ventanaDeJuego.blit(imagenObstaculo, (x, y))
+
+
+'Función que dibuja al segundo obstáculo'
+def dibujarObstaculoDos(ventana, imagen, xObstaculo, yObstaculo):
+    ventanaDeJuego = ventana                    #Se define la pantalla de juego
+    imagenObstaculo = imagen                    #Se define la imagen del obstáculo
+    x = xObstaculo                              #Posición en 'x' de la imagen
+    y = yObstaculo                              #Posición en 'y' de la imagen
+    ventanaDeJuego.blit(imagenObstaculo, (x, y))
+
+
+'Función que dibuja al tercer obstáculo'
+def dibujarObstaculoTres(ventana, imagen, xObstaculo, yObstaculo):
+    ventanaDeJuego = ventana                    #Se define la pantalla de juego
+    imagenObstaculo = imagen                    #Se define la imagen del obstáculo
+    x = xObstaculo                              #Posición en 'x' de la imagen
+    y = yObstaculo                              #Posición en 'y' de la imagen
+    ventanaDeJuego.blit(imagenObstaculo, (x, y))
+
+
+'Función que dibuja a la moneda'
+def dibujarMoneda(ventana, imagen, xMoneda, yMoneda):
+    ventanaDeJuego = ventana                    #Se define la pantalla de juego
+    imagenMoneda = imagen                       #Se define la imagen de la moneda
+    x = xMoneda                                 #Posición en 'x' de la imagen
+    y = yMoneda                                 #Posición en 'y' de la imagen
+    ventanaDeJuego.blit(imagenMoneda, (x, y))
+
+
+'Función para puntos'
+def hacerPuntaje(ventana, monedasAcumuladas):
+    ventanaDeJuego = ventana
+    fuenteTexto = pygame.font.SysFont(None, 25)
+    texto = fuenteTexto.render("Monedas recolectadas: " + str(monedasAcumuladas), True, Negro)
+    ventanaDeJuego.blit(texto, (0, 0))
+
+
+'Función para dibujar los botones'
+def dibujarBotones(ventana, x, y, ancho, alto, imagenUno, imagenDos, accionClick=None):
+    ventanaDeJuego = ventana                                        #Se carga la ventana
+    mouse = pygame.mouse.get_pos()                                  #Obtiene la posición del mouse para poder...
+                                                                    #...actualizar la imagen
+
+    if x + ancho > mouse[0] > x and y + alto > mouse[1] > y:        #Se pregunta respecto la posición del mouse
+        ventanaDeJuego.blit(imagenDos, (x, y))                      #Se actuliza la imagen del botón
+    else:
+        ventanaDeJuego.blit(imagenUno, (x, y))                      #Si no pasa nada, no se actualiza
+
+
+'Función para dibujar la pantalla de GameOver'
+def dibujarPerdio(ventana, imagen):
+    imagenPerdio = imagen                             #Se define la imagen del personaje
+    ventanaDeJuego = ventana                          #Se define la pantalla de juego
+    ventanaDeJuego.blit(imagenPerdio, (0,0))          #Se dibuja la imagen
+    pygame.display.update()                           #Se actualiza el display de pygame
+    time.sleep(5)                                     #Se establece cuánto tiempose quiere esta pantalla
+    dibujarJuego()                                    #Se lleva al jugador al menu
+    #dibujarMenu()
+
+def dibujarPuntaje(monedasColectadas):
+    imagenPuntos = pygame.image.load("fondoPuntos.png")
+    ventanaDeJuego = pygame.display.set_mode((ANCHO, ALTO))
+    ventanaDeJuego.blit(imagenPuntos, (0,0))
+    fuenteTexto = pygame.font.SysFont(None, 30)
+    texto = fuenteTexto.render("Monedas recolectadas en tu última ronda: " + str(monedasColectadas), True, Negro)
+    textoDos = fuenteTexto.render("¿Puedes superarte?", True, Negro)
+    ventanaDeJuego.blit(texto, (200, 270))
+    ventanaDeJuego.blit(textoDos, (320, 310))
+    pygame.display.update()
+    time.sleep(5)
+    dibujarJuego()
+
+
+'Estructura del programa (se dibuja todo lo anterior'
+def dibujarJuego():
+    pygame.init()                                              #Se inicializa pygame
+    ventanaDeJuego = pygame.display.set_mode((ANCHO, ALTO))    #Se crea la pantalla
+    pygame.display.set_caption("Mamma mia! It's a kart!")      #Nombre del juego
+    logo = pygame.image.load("Logo.png")                       #Se carga la imagen para el logo
+    pygame.display.set_icon(logo)                              #Logo en ventana
+    reloj = pygame.time.Clock()                                #Limitar FPS
+
+
+    ### Imágen del personaje ###
+    imagenMario = pygame.image.load("marioJuego.png")          #Se carga la imagen
+    anchoImagen = 100                                          #De la imagen, se obtiene el ancho
+    x = ANCHO * 0.45                                           #Posición en 'x'
+    y = ALTO * 0.8                                             #Posición en 'y'
+    cambioEnX = 0                                              #Contador para actualizar posición
+    ### Imágen del personaje ###
+
+    ### Imágen obstáculo ###
+    imagenObstaculo = pygame.image.load("obstaculo.png")       #Se carga la imagen
+    anchoObstaculo = 80                                        #De la imagen, se obtiene el ancho
+    altoObstaculo = 70                                         #De la imagen, se obtiene el alto
+    xObstaculo = random.randrange(0, ANCHO)                    #Posición en 'x'
+    yObstaculo = -600                                          #Posición en 'y'
+    velocidad = 10                                             #Velocidad de caída del objeto
+
+    imagenObstaculoDos = pygame.image.load("obstaculoDos.png") #Se carga la imagen
+    anchoObstaculoDos = 80                                     #De la imagen, se obtiene el ancho
+    altoObstaculoDos = 70                                      #De la imagen, se obtiene el alto
+    xObstaculoDos = random.randrange(0, ANCHO)                 #Posición en 'x'
+    yObstaculoDos = -650                                       #Posición en 'y'
+    velocidadDos = 0.5                                         #Velocidad de caída del objeto
+
+    imagenObstaculoTres = pygame.image.load("obstaculoTres.png") #Se carga la imagen
+    anchoObstaculoTres = 80                                      #De la imagen, se obtiene el ancho
+    altoObstaculoTres = 70                                       #De la imagen, se obtiene el alto
+    xObstaculoTres = random.randrange(0, ANCHO)                  #Posición en 'x'
+    yObstaculoTres = -650                                        #Posición en 'y'
+    velocidadTres = 0.1                                          #Velocidad de caída del objeto
+    ### Imágen obstáculo ###
+
+    ### Imágen moneda ###
+    imagenMoneda = pygame.image.load("moneda.png")             #Se carga la imagen
+    anchoMoneda = 54                                           #De la imagen, se obtiene el ancho
+    altoMoneda = 70                                            #De la imagen, se obtiene el alto
+    xMoneda = random.randrange(0, ANCHO)                       #Posición en 'x'
+    yMoneda = -600                                             #Posición en 'y'
+    velocidadMoneda = 20                                       #Velocidad de caída del objeto
+    ### Imágen moneda ###
+
+    ### Puntaje Monedas ###
+    monedasColectadas = 0                                      #Se establece el contador de monedas
+    global puntos
+    ### Puntaje Monedas ###
+
+    ### Imágenes de fondo y botones ###
+    fondoJuego = pygame.image.load("fondoNivelBase.png")
+    fondoPerdio = pygame.image.load("FondoPerdio.png")
+    fondoMenu = pygame.image.load("fondoMenu.png")
+    botonJugar = pygame.image.load("jugarUno.png")
+    botonJugarDos = pygame.image.load("jugarDos.png")
+    botonSalirUno = pygame.image.load("salidaUno.png")
+    botonSalirDos = pygame.image.load("salidaDos.png")
+    botonPuntosUno = pygame.image.load("puntosUno.png")
+    botonPuntosDos = pygame.image.load("puntosDos.png")
+    ### Imágenes de fondo y botones ###
+
+    ### ANIMACIÓN MENU ###
+    imagenMarioMenu = pygame.image.load("marioMenu.png")        #Se carga la imagen delpersonaje como animación en Menú
+    xMario = -200                                               #Se establece la posición del personaje en 'x'
+    yMario = 500                                                #Se establece la posición del personaje en 'y'
+    ### ANIMACIÓN MENU ###
+
+    ### ESTADO ###
+    estadoJuego = MENU
+    ### ESTADO ###
+
+    terminado = False                                          #¿Se acabó el juego?, NO
+
+    ### CICLO PRINCIPAL ###
+    while not terminado:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()                                  #El jugador quiere salir del juego
+                quit()
+
+            ### Movimiento de la imagen con teclado ###
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_LEFT:
+                    cambioEnX -= 15
+                elif evento.key == pygame.K_RIGHT:
+                    cambioEnX += 15
+
+            if evento.type == pygame.KEYUP:
+                if evento.key == pygame.K_LEFT or evento.key == pygame.K_RIGHT:
+                    cambioEnX = 0
+            ### Movimiento de la imagen con teclado ###
+
+            ### MOUSE ###
+            elif evento.type == pygame.MOUSEBUTTONDOWN:
+                xm, ym = pygame.mouse.get_pos()
+                anchoBoton = 150
+                altoBoton = 50
+                xBotonUno = 150
+                yBotonUno = 360
+                xBotonDos = 480
+                yBotonDos = 360
+                xBotonTres = 310
+                yBotonTres = 420
+                if xm >= xBotonUno and xm <= xBotonUno + anchoBoton and ym >= yBotonUno and ym <= yBotonUno + altoBoton:
+                    estadoJuego = JUGANDO
+                elif xm >= xBotonDos and xm <= xBotonDos + anchoBoton and ym >= yBotonDos and ym <= yBotonDos + altoBoton:
+                     dibujarPuntaje(puntos)
+                elif xm >= xBotonTres and xm <= xBotonTres + anchoBoton and ym >= yBotonTres and ym <= yBotonTres + altoBoton:
+                    pygame.quit()
+                    quit()
+            ### MOUSE ###
+
+        if estadoJuego == MENU:
+            ventanaDeJuego.blit(fondoMenu, (0, 0))                                             #Dibuja Menu
+            dibujarBotones(ventanaDeJuego, 150, 360, 150, 50, botonJugar, botonJugarDos)       #Dibuja botón
+            dibujarBotones(ventanaDeJuego, 480, 360, 150, 50, botonPuntosUno, botonPuntosDos)  #Dibuja botón
+            dibujarBotones(ventanaDeJuego, 315, 420, 150, 50, botonSalirUno, botonSalirDos)    #Dibuja botón
+            ventanaDeJuego.blit(imagenMarioMenu, (xMario, yMario))                             #Dibuja personaje
+            xMario += 5                 #Se actualiza la posición del personaje
+            if xMario > ANCHO + 30:     #Si sale de la pantalla la imagen...
+                xMario = -200           #...su posición 'x' se reinicia
+            pygame.display.update()
+            reloj.tick(15)
+
+        elif estadoJuego == JUGANDO:
+            x += cambioEnX                                         #Se actualiza la posición de la imagen
+            yObstaculo += velocidad                                #Se actuliza la posición de 'y' del obstaculo
+            yObstaculoDos += velocidadDos                          #Se actualiza la posición de 'y' del segundo obstáculo
+            yObstaculoTres += velocidadTres                        #Se actualiza la posición de 'y' del tercer obstáculo
+            yMoneda += velocidadMoneda                             #Se actuliza la posición de 'y' de la moneda
+            ventanaDeJuego.blit(fondoJuego, (0,0))                 #Se dibuja el fondo del juego
+            dibujarPersonaje(ventanaDeJuego, imagenMario, x, y)    #Se dibuja el personaje
+            dibujarObstaculoUno(ventanaDeJuego, imagenObstaculo, xObstaculo, yObstaculo)           #Se dibuja un obstáculo
+            dibujarObstaculoDos(ventanaDeJuego, imagenObstaculoDos, xObstaculoDos, yObstaculoDos)  #Se dibuja otro obstáculo
+            dibujarObstaculoTres(ventanaDeJuego, imagenObstaculoTres, xObstaculoTres, yObstaculoTres) #Otro obstáculo
+            dibujarMoneda(ventanaDeJuego, imagenMoneda, xMoneda, yMoneda)                 #Se dibuja la moneda
+            hacerPuntaje(ventanaDeJuego, monedasColectadas)        #Se imprime el contador de monedas
+
+            ### Limites de para la pantalla ###
+            if x > ANCHO - anchoImagen or x < 0:
+                dibujarPerdio(ventanaDeJuego, fondoPerdio)
+                estadoJuego = MENU                                 #Se vuelve al menu
+            ### Limites de para la pantalla ###
+
+            ### Actualización de posición de los obstáculos ###
+            if yObstaculo > ALTO:                                  #Condición para saber si el objeto sale de la pantalla
+                yObstaculo = 0 - altoObstaculo                     #Al hacerlo, su posición en 'y' debe ser como la original
+                xObstaculo = random.randrange(0, ANCHO)            #También se genera una nueva posición en 'x'
+
+            if yObstaculoDos > ALTO:                               #Condición para saber si el objeto sale de la pantalla
+                yObstaculoDos = 0 - altoObstaculoDos               #Al hacerlo, su posición en 'y' debe ser como la original
+                xObstaculoDos = random.randrange(0, ANCHO)         #También se genera una nueva posición en 'x'
+
+            if yObstaculoTres > ALTO:                              #Condición para saber si el objeto sale de la pantalla
+                yObstaculoTres = 0 - altoObstaculoTres             #Al hacerlo, su posición en 'y' debe ser como la original
+                xObstaculoTres = random.randrange(0, ANCHO)        #También se genera una nueva posición en 'x'
+            ### Actualización de posición de los obstáculos ###
+
+            ### Actualización de posición de moneda ###
+            if yMoneda > ALTO:                                     #Condición para saber si el objeto sale de la pantalla
+                yMoneda = 0 - altoMoneda                           #Al hacerlo, su posición en 'y' debe ser como la original
+                xMoneda = random.randrange(0, ANCHO)               #También se genera una nueva posición en 'x'
+            ### Actualización de posición de moneda ###
+
+
+            ### Colsiones con obstáculos ###
+            if y < yObstaculo + altoObstaculo:
+                if x > xObstaculo and x < xObstaculo + anchoObstaculo or x + anchoImagen > xObstaculo and x + anchoImagen < xObstaculo + anchoObstaculo:
+                    dibujarPerdio(ventanaDeJuego, fondoPerdio)
+                    estadoJuego = MENU                             #Se vuelve al menu
+            if y < yObstaculoDos + altoObstaculoDos:
+                if x > xObstaculoDos and x < xObstaculoDos + anchoObstaculoDos or x + anchoImagen > xObstaculoDos and x + anchoImagen < xObstaculoDos + anchoObstaculoDos:
+                    dibujarPerdio(ventanaDeJuego, fondoPerdio)
+                    estadoJuego = MENU                             #Se vuelve al menu
+            if y < yObstaculoTres + altoObstaculoTres:
+                if x > xObstaculoTres and x < xObstaculoTres + anchoObstaculoTres or x + anchoImagen > xObstaculoTres and x + anchoImagen < xObstaculoTres + anchoObstaculoTres:
+                    dibujarPerdio(ventanaDeJuego, fondoPerdio)
+                    estadoJuego = MENU                             #Se vuelve al menu
+            ### Colsiones con obstáculos ###
+
+            ### Colisiones con moneda ###
+            if y < yMoneda + altoMoneda:
+                if x > xMoneda and x < xMoneda + anchoMoneda or x + anchoImagen > xMoneda and x + anchoImagen < xMoneda + anchoMoneda:
+                    yMoneda = 0 - altoMoneda                       #Se regresa a la posición 'y' incial
+                    xMoneda = random.randrange(0, ANCHO)           #Se genera una nueva posición en 'x' para la moneda
+                    monedasColectadas += 1                         #Se actualiza el contador
+                    velocidad += 0.5                               #Se incrementa la velocidad con cada vuelta
+                    puntos = monedasColectadas
+                    if monedasColectadas >= 5:
+                        velocidadDos = 2 + monedasColectadas       #Aparece un nuevo obstáculo
+                    if monedasColectadas >= 10:
+                        velocidadTres = 5 + monedasColectadas      #Aparece un nuevo obstáculo
+            ### Colisiones con moneda ###
+
+
+        pygame.display.update()                                #Se actualiza pygame (lo mismo que 'flip()')
+        reloj.tick(30)                                         #Cantidad de FPS
+
+    pygame.quit()                                              #Se cierra pygame
+
+
+'Función main que hara la ejecución del juego'
+def main():
+    dibujarJuego()                              #Se llama a la función que contiene el ciclo principal
+
+
+
+main()
+
